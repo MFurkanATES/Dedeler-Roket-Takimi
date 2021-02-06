@@ -91,6 +91,11 @@ def lines():
   right_part_line()
   left_part_line()
 
+def team_name():
+  cv2.putText(screen,("DEDELER ROKETCILIK"),(400,50),cv2.FONT_HERSHEY_PLAIN,3,(150,255,50),2)
+  cv2.putText(screen,("ROKETSAN TEKNOFEST 2021"),(410,700),cv2.FONT_HERSHEY_PLAIN,2,(150,255,50),2)
+
+
 def orientation():
   roll = round(np.degrees(vehicle.attitude.roll),4)
   pitch = round(np.degrees(vehicle.attitude.pitch),4)
@@ -202,7 +207,7 @@ def stages():
   cv2.putText(screen,("STAGE 2:"+str(stage2_txt)),(25,150),cv2.FONT_HERSHEY_PLAIN,1,(150,255,50),1)
 
   
-
+out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 15, (width,height))
 
 while True:
   screen = np.copy(screen_a)
@@ -212,6 +217,7 @@ while True:
   velo()
   orientation()
   stages()
+  team_name()
 
   lines()
   ret,frame = video.read()
@@ -221,6 +227,8 @@ while True:
     for j in range (640):
       screen_a[120 + i , 320+j] = frame[i,j]
   cv2.imshow("s",screen)
+  out.write(screen)
+
   
   if cv2.waitKey(1) & 0xFF == ord('q'):
     break
