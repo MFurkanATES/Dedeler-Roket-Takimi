@@ -20,4 +20,7 @@ Raspberry de bu kod(<remote_ip> kısmını sil ve görüntünün gönderileceği
 raspivid -n -w 1280 -h 720 -b 1000000 -fps 15 -t 0 -o - | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay config-interval=10 pt=96 ! udpsink host=<remote_ip> port=9000
 
 
+Konsept olarak stm32 tabanlı bir otopilot sensör kartı kullanılacak olup linux bilgisayar üzerinden veri aktarımı ve karar verme mekanizmaları yapılacaktır
+Proje ilerlemesine göre bu repo privite olarak güncellenecektir.
+
 
