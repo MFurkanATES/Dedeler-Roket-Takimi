@@ -1,5 +1,6 @@
 from __future__ import print_function
 from dronekit import connect, VehicleMode
+from datetime import datetime,timedelta
 import cv2
 import time
 import numpy as np
@@ -39,6 +40,7 @@ peak_vel_x = 0.0
 peak_vel_y = 0.0
 peak_vel_z = 0.0
 
+gps_time = ""
 
 screen_a = np.zeros((720,1280,3),dtype = np.uint8)
 
@@ -61,6 +63,11 @@ print("Rokete baglaniliyor\n \nBaglanti portu : %s  \nBaglanti hizi: %s " % (con
 vehicle = connect(connection_string, wait_ready=True,baud=baudrate)
 
 
+@vehicle.on_message('SYSTEM_TIME')
+def listener(self, name, message): 
+  global gps_time  
+  mavlink_time = float(message.time_unix_usec)/1000000
+  gps_time = (datetime.fromtimestamp(mavlink_time)).strftime('%Y-%m-%d %H:%M:%S')
 
 def gps_line():  
   cv2.rectangle(screen,((width-270),0),(width-1,60),(150,255,50),1) 
@@ -172,6 +179,11 @@ def Gps():
   cv2.putText(screen,(str(round(vehicle.location.global_relative_frame.alt,2))),(width-50,50),cv2.FONT_HERSHEY_PLAIN,1,(150,255,50),1)
   #vehicle.location.global_relative_frame.lat)
 
+def gps_time_stamp():
+  global gps_time
+  cv2.putText(screen,str(gps_time),(25,45),cv2.FONT_HERSHEY_PLAIN,1,(150,255,50),1)
+
+
 def stages():
   #2 adet stm yada arduino rcInden girip butonun tetiklemesi sonrasi pwm degistirecek 
   global lock1
@@ -218,14 +230,14 @@ while True:
   orientation()
   stages()
   team_name()
+  gps_time_stamp()
 
   lines()
   ret,frame = video.read()
   #print(np.size(frame))
   #frame2  =  cv2.resize(frame,(640,480))
-  for i in range (480):
-    for j in range (640):
-      screen_a[120 + i , 320+j] = frame[i,j]
+  for i in range (480):    
+    screen_a[120 + i,320:960]  = frame[i,:]
   cv2.imshow("s",screen)
   out.write(screen)
 
